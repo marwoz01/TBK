@@ -14,6 +14,10 @@ class Validator {
 
   isValidYear(year) {
     const currentYear = new Date().getFullYear();
-    return year > 0 && year <= currentYear;
+    return year >= 1000 && year <= currentYear;
+  }
+
+  isValidPageCount(pages) {
+    return Number.isInteger(pages) && pages > 0;
   }
 }
