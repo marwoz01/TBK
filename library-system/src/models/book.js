@@ -17,6 +17,7 @@ class Book {
     this.genre = genre;
   }
 
+  // Gettery
   get availableCopies() {
     return this.totalCopies - this.borrowedCopies;
   }
@@ -34,6 +35,7 @@ class Book {
     return currentYear - this.publicationYear;
   }
 
+  // Settery
   set copies({ total, borrowed }) {
     if (total < borrowed) {
       throw new Error("Total copies cannot be less than borrowed copies.");
@@ -48,6 +50,7 @@ class Book {
     if (genre) this.genre = genre;
   }
 
+  // Metody
   borrow() {
     if (this.isAvailable) {
       this.borrowedCopies += 1;
@@ -77,5 +80,9 @@ class Book {
       Validator.isString(bookData.isbn) &&
       Validator.isPositiveNumber(bookData.totalCopies)
     );
+  }
+
+  static compareByYear(book1, book2) {
+    return book1.publicationYear - book2.publicationYear;
   }
 }
