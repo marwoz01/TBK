@@ -99,4 +99,106 @@ class Library {
     }
     return null;
   }
+
+  // Metody wypożyczeń
+  borrowBook(userEmail, isbn) {
+    const user = this.findUserByEmail(userEmail);
+    const book = this.findBookByISBN(isbn);
+
+    const borrowDate = new Date();
+    const dueDate = DateUtils.addDays(borrowDate, 14);
+
+    book.borrow();
+    user.addBorrowedBook(isbn, book.title);
+    user.borrowHistory.push({ isbn, bookTitle: book.title, borrowDate });
+
+    this.loans.push({ userEmail, isbn, borrowDate, dueDate });
+
+    return { userEmail, isbn, borrowDate, dueDate };
+  }
+
+  returnBook(userEmail, isbn) {
+    const user = this.findUserByEmail(userEmail);
+    const book = this.findBookByISBN(isbn);
+
+    book.return();
+    user.removeBorrowedBook(isbn);
+
+    user.borrowHistory.push({
+      isbn,
+      bookTitle: book.title,
+      returnDate: new Date(),
+    });
+
+    return book;
+  }
+
+  getUserLoans(userEmail) {
+    return this.loans.filter((loan) => loan.userEmail === userEmail);
+  }
+
+  getOverdueLoans(days) {
+    const now = Date.now();
+    return this.loans.filter(
+      (loan) => (now - loan.borrowDate) / (1000 * 60 * 60 * 24) > days
+    );
+  }
+
+  getPopularBooks(limit) {
+    const sorted = [...this.books].sort(
+      (a, b) => b.borrowedCopies - a.borrowedCopies
+    );
+    return sorted.slice(0, limit);
+  }
+
+  getActiveUsers(limit) {
+    const sorted = [...this.users].sort(
+      (a, b) => b.borrowHistory.length - a.borrowHistory.length
+    );
+    return sorted.slice(0, limit);
+  }
+
+  generateReport() {
+    const totalTitles = this.books.length;
+    const totalCopies = this.books.reduce((sum, b) => sum + b.totalCopies, 0);
+    const availableCopies = this.books.reduce(
+      (sum, b) => sum + (b.totalCopies - b.borrowedCopies),
+      0
+    );
+    const totalUsers = this.users.length;
+    const activeLoans = this.loans.length;
+
+    const topBooks = [...this.books]
+      .sort((a, b) => b.borrowedCopies - a.borrowedCopies)
+      .slice(0, 5)
+      .map((b) => ({
+        title: b.title,
+        isbn: b.isbn,
+        borrowedCopies: b.borrowedCopies,
+      }));
+
+    const topUsers = [...this.users]
+      .sort((a, b) => b.borrowHistory.length - a.borrowHistory.length)
+      .slice(0, 5)
+      .map((u) => ({
+        name: u.name,
+        email: u.email,
+        borrows: u.borrowHistory.length,
+      }));
+
+    return {
+      library: this.name,
+      totals: {
+        titles: totalTitles,
+        copies: totalCopies,
+        available: availableCopies,
+        users: totalUsers,
+        activeLoans,
+      },
+      top: {
+        books: topBooks,
+        users: topUsers,
+      },
+    };
+  }
 }

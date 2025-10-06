@@ -57,22 +57,21 @@ class User {
   getBorrowHistory() {
     return this.borrowHistory;
   }
-
-  getFormattedHistory() {
-    return this.borrowHistory
-      .map(
-        (e) =>
-          `${e.bookTitle} (${e.isbn}) - ${e.borrowDate.toLocaleDateString()}`
-      )
-      .join("\n");
-  }
-
-  hasOverdueBooks(days) {
-    const now = Date.now();
-    return this.borrowHistory.some(
-      (e) =>
-        this.borrowedBooks.includes(e.isbn) &&
-        (now - e.borrowDate) / (1000 * 60 * 60 * 24) > days
-    );
-  }
 }
+
+User.prototype.getFormattedHistory = function () {
+  return this.borrowHistory
+    .map(
+      (e) => `${e.bookTitle} (${e.isbn}) - ${e.borrowDate.toLocaleDateString()}`
+    )
+    .join("\n");
+};
+
+User.prototype.hasOverdueBooks = function (days) {
+  const now = Date.now();
+  return this.borrowHistory.some(
+    (e) =>
+      this.borrowedBooks.includes(e.isbn) &&
+      (now - e.borrowDate) / (1000 * 60 * 60 * 24) > days
+  );
+};
