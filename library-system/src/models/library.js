@@ -1,4 +1,10 @@
-class Library {
+import { Book } from "./book.js";
+import { User } from "./user.js";
+import { DateUtils } from "../utils/date-utils.js";
+import { Validator } from "../utils/validator.js";
+import { createLoan } from "../helpers/factories.js";
+
+export class Library {
   constructor(name) {
     this.name = name;
     this.books = [];
@@ -9,11 +15,11 @@ class Library {
 
   // Gettery
   get totalBooks() {
-    return this.books.length;
+    return this.books.reduce((sum, b) => sum + b.totalCopies, 0);
   }
 
   get availableBooks() {
-    return this.books.filter((book) => book.isAvailable).length;
+    return this.books.reduce((sum, b) => sum + b.availableCopies, 0);
   }
 
   get statistics() {
@@ -104,17 +110,17 @@ class Library {
   borrowBook(userEmail, isbn) {
     const user = this.findUserByEmail(userEmail);
     const book = this.findBookByISBN(isbn);
-
-    const borrowDate = new Date();
-    const dueDate = DateUtils.addDays(borrowDate, 14);
+    if (!user || !book) return false;
+    if (user.borrowCount >= this.maxBooksPerUser) return false;
+    if (!book.isAvailable) return false;
 
     book.borrow();
     user.addBorrowedBook(isbn, book.title);
-    user.borrowHistory.push({ isbn, bookTitle: book.title, borrowDate });
 
+    const borrowDate = new Date();
+    const dueDate = DateUtils.addDays(borrowDate, 14);
     this.loans.push({ userEmail, isbn, borrowDate, dueDate });
-
-    return { userEmail, isbn, borrowDate, dueDate };
+    return true;
   }
 
   returnBook(userEmail, isbn) {

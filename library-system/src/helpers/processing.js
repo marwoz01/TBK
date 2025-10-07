@@ -1,57 +1,38 @@
-function sortBooksByYear(books, order = "asc") {
-  const sorted = [...books].sort(
-    (a, b) => a.publicationYear - b.publicationYear
+export function sortBooksByYear(books, order = "asc") {
+  const dir = order === "desc" ? -1 : 1;
+  return [...books].sort(
+    (a, b) => dir * (a.publicationYear - b.publicationYear)
   );
-  return order === "asc" ? sorted : sorted.reverse();
 }
 
-function filterAvailableBooks(books) {
-  return books.filter((book) => book.totalCopies > book.borrowedCopies);
+export function filterAvailableBooks(books) {
+  return books.filter((b) => b.isAvailable);
 }
 
-function groupBooksByGenre(books) {
-  const result = {};
-  for (const book of books) {
-    const genre = book.genre || "Nieznany";
-    if (!result[genre]) {
-      result[genre] = [];
-    }
-    result[genre].push(book);
-  }
-  return result;
-}
-
-function calculateStatistics(books, users, loans) {
-  const titles = books.length;
-  const copies = books.reduce((sum, b) => sum + (b.totalCopies || 0), 0);
-  const borrowed = books.reduce((sum, b) => sum + (b.borrowedCopies || 0), 0);
-  const available = copies - borrowed;
-
-  const usersCount = users.length;
-  const activeLoans = loans.length;
-
-  const genres = books.reduce((acc, b) => {
-    const g = b.genre || "Nieznany";
-    acc[g] = (acc[g] || 0) + 1;
+export function groupBooksByGenre(books) {
+  return books.reduce((acc, b) => {
+    (acc[b.genre] ||= []).push(b);
     return acc;
   }, {});
+}
 
-  const topGenre =
-    Object.keys(genres).sort((a, b) => genres[b] - genres[a])[0] || null;
+export function calculateStatistics(books, users, loans) {
+  const totalBooks = books.reduce((s, b) => s + b.totalCopies, 0);
+  const availableBooks = books.reduce((s, b) => s + b.availableCopies, 0);
+  const totalUsers = users.length;
+  const totalLoans = loans.length;
+
+  const groupedByGenre = groupBooksByGenre(books);
+  const mostPopularGenre =
+    Object.entries(groupedByGenre).sort(
+      (a, b) => b[1].length - a[1].length
+    )[0]?.[0] ?? null;
 
   return {
-    totals: {
-      titles,
-      copies,
-      borrowed,
-      available,
-      users: usersCount,
-      activeLoans,
-    },
-    genres,
-    topGenre,
-    ratios: {
-      utilization: copies ? +(borrowed / copies).toFixed(2) : 0,
-    },
+    totalBooks,
+    availableBooks,
+    totalUsers,
+    totalLoans,
+    mostPopularGenre,
   };
 }

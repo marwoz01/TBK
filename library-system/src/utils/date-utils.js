@@ -1,28 +1,26 @@
-class DateUtils {
+export class DateUtils {
   static isLeapYear(year) {
-    if (year % 400 === 0) {
-      return true;
-    } else if (year % 4 === 0) {
-      return true;
-    } else {
-      return false;
-    }
+    return year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0);
   }
 
   static getDaysBetween(date1, date2) {
-    return Math.floor(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24));
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    const diffMs = Math.abs(d2 - d1);
+    return Math.floor(diffMs / (1000 * 60 * 60 * 24));
   }
 
   static formatDate(date) {
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
     return `${day}-${month}-${year}`;
   }
 
   static addDays(date, days) {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
+    const d = new Date(date);
+    d.setDate(d.getDate() + Number(days || 0));
+    return d;
   }
 }

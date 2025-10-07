@@ -7,9 +7,6 @@ Array.prototype.myEvery = function (callback) {
   return true;
 };
 
-console.log([1, 2, 3].myEvery((n) => n > 0));
-console.log([1, 2, 3].myEvery((n) => n > 2));
-
 Array.prototype.myFilter = function (callback) {
   const result = [];
   for (let i = 0; i < this.length; i++) {
@@ -20,25 +17,15 @@ Array.prototype.myFilter = function (callback) {
   return result;
 };
 
-console.log([1, 2, 3, 4].myFilter((n) => n % 2 === 0));
-
 Array.prototype.groupBy = function (key) {
-  const result = {};
-  for (let i = 0; i < this.length; i++) {
-    const groupKey = this[i][key];
-    if (!result[groupKey]) {
-      result[groupKey] = [];
-    }
-    result[groupKey].push(this[i]);
+  const out = {};
+  for (const item of this) {
+    const k = typeof key === "function" ? key(item) : item?.[key];
+    const bucket = k ?? "undefined";
+    (out[bucket] ||= []).push(item);
   }
-  return result;
+  return out;
 };
-
-console.log(
-  [{ type: "dog" }, { type: "cat" }, { type: "dog" }].groupBy("type")
-);
-
-console.log(["one", "two", "three"].groupBy("length"));
 
 Array.prototype.unique = function () {
   const result = [];
@@ -49,6 +36,3 @@ Array.prototype.unique = function () {
   }
   return result;
 };
-
-console.log([1, 1, 2, 3, 3].unique());
-console.log(["a", "a", "b"].unique());

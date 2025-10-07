@@ -1,11 +1,11 @@
-function swapElements([el1, el2]) {
+export function swapElements([el1, el2]) {
   return [el2, el1];
 }
 
-function mergeArrays(...arrays) {
-  return [].concat(...arrays);
+export function mergeArrays(...arrays) {
+  return arrays.flat();
 }
 
-function uniqueValues(array) {
+export function uniqueValues(array) {
   return [...new Set(array)];
 }

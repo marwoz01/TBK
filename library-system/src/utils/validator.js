@@ -1,23 +1,31 @@
-class Validator {
-  isValidISBN(isbn) {
-    if (isbn.length !== 13 || !/^\d+$/.test(isbn)) {
-      return false;
-    } else {
-      return true;
-    }
+// src/utils/validator.js
+export class Validator {
+  static isValidISBN(isbn) {
+    return typeof isbn === "string" && /^\d{13}$/.test(isbn);
   }
 
-  isVaildEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
+  static isValidEmail(email) {
+    return (
+      typeof email === "string" &&
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+    );
   }
 
-  isValidYear(year) {
+  static isValidYear(year) {
+    const y = Number(year);
     const currentYear = new Date().getFullYear();
-    return year >= 1000 && year <= currentYear;
+    return Number.isInteger(y) && y >= 1000 && y <= currentYear;
   }
 
-  isValidPageCount(pages) {
+  static isValidPageCount(pages) {
     return Number.isInteger(pages) && pages > 0;
+  }
+
+  // pomocnicze dla Book.isValidBook:
+  static isString(v) {
+    return typeof v === "string" && v.trim().length > 0;
+  }
+  static isPositiveNumber(v) {
+    return Number.isFinite(v) && v > 0;
   }
 }

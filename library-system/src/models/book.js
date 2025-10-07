@@ -1,19 +1,21 @@
-class Book {
-  constructor(
+import { Validator } from "../utils/validator.js";
+
+export class Book {
+  constructor({
     title,
     author,
     isbn,
     publicationYear,
     totalCopies,
-    borrowedCopies,
-    genre
-  ) {
+    borrowedCopies = 0,
+    genre,
+  }) {
     this.title = title;
     this.author = author;
     this.isbn = isbn;
     this.publicationYear = publicationYear;
     this.totalCopies = totalCopies;
-    this.borrowedCopies = borrowedCopies;
+    this.borrowedCopies = borrowedCopies ?? 0;
     this.genre = genre;
   }
 
@@ -27,21 +29,24 @@ class Book {
   }
 
   get info() {
-    return `${this.title} by ${this.author} (${this.publicationYear}) - Genre: ${this.genre}, ISBN: ${this.isbn}, Available Copies: ${this.availableCopies}/${this.totalCopies}`;
+    return `${this.title} by ${this.author} (${this.publicationYear}) - Genre: ${this.genre}, ISBN: ${this.isbn}, Available: ${this.availableCopies}/${this.totalCopies}`;
   }
 
   get age() {
-    const currentYear = new Date().getFullYear();
-    return currentYear - this.publicationYear;
+    return new Date().getFullYear() - this.publicationYear;
   }
 
   // Settery
   set copies({ total, borrowed }) {
-    if (total < borrowed) {
+    if (
+      typeof total === "number" &&
+      typeof borrowed === "number" &&
+      total < borrowed
+    ) {
       throw new Error("Total copies cannot be less than borrowed copies.");
     }
-    this.totalCopies = total;
-    this.borrowedCopies = borrowed;
+    if (typeof total === "number") this.totalCopies = total;
+    if (typeof borrowed === "number") this.borrowedCopies = borrowed;
   }
 
   set details({ title, author, genre }) {
@@ -52,33 +57,46 @@ class Book {
 
   // Metody
   borrow() {
-    if (this.isAvailable) {
-      this.borrowedCopies += 1;
-    } else {
-      throw new Error("No available copies to borrow.");
-    }
+    if (!this.isAvailable) throw new Error("No available copies to borrow.");
+    this.borrowedCopies += 1;
+    return true;
+  }
+
+  return() {
+    if (this.borrowedCopies <= 0)
+      throw new Error("No borrowed copies to return.");
+    this.borrowedCopies -= 1;
+    return true;
   }
 
   returnBook() {
-    if (this.borrowedCopies > 0) {
-      this.borrowedCopies -= 1;
-    } else {
-      throw new Error("No borrowed copies to return.");
-    }
+    return this.return();
   }
 
   getFormattedInfo() {
-    return `Title: ${this.title}\nAuthor: ${this.author}\nPublication Year: ${this.publicationYear}\nGenre: ${this.genre}\nISBN: ${this.isbn}\nAvailable Copies: ${this.availableCopies}/${this.totalCopies}`;
+    return [
+      `Title: ${this.title}`,
+      `Author: ${this.author}`,
+      `ISBN: ${this.isbn}`,
+      `Publication Year: ${this.publicationYear}`,
+      `Genre: ${this.genre}`,
+      `Total Copies: ${this.totalCopies}`,
+      `Borrowed Copies: ${this.borrowedCopies}`,
+      `Available Copies: ${this.availableCopies}`,
+    ].join("\n");
   }
 
+  // Statyczne metody
   static isValidBook(bookData) {
+    const { title, author, isbn, publicationYear, totalCopies, genre } =
+      bookData || {};
     return (
-      Validator.isString(bookData.title) &&
-      Validator.isString(bookData.author) &&
-      Validator.isNumber(bookData.publicationYear) &&
-      Validator.isString(bookData.genre) &&
-      Validator.isString(bookData.isbn) &&
-      Validator.isPositiveNumber(bookData.totalCopies)
+      Validator.isString(title) &&
+      Validator.isString(author) &&
+      Validator.isValidISBN(isbn) &&
+      Validator.isValidYear(publicationYear) &&
+      Validator.isPositiveNumber(totalCopies) &&
+      Validator.isString(genre)
     );
   }
 

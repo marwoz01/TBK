@@ -1,4 +1,4 @@
-function createBook({
+export function createBook({
   title,
   author,
   isbn,
@@ -17,7 +17,7 @@ function createBook({
   };
 }
 
-function createUser({ name, email, registrationDate = new Date() }) {
+export function createUser({ name, email, registrationDate = new Date() }) {
   return {
     name,
     email,
@@ -27,11 +27,11 @@ function createUser({ name, email, registrationDate = new Date() }) {
   };
 }
 
-function createLoan({ userEmail, isbn, borrowDate = new Date(), dueDate }) {
-  return {
-    userEmail,
-    isbn,
-    borrowDate,
-    dueDate,
-  };
+export function createLoan({
+  userEmail,
+  isbn,
+  borrowDate = new Date(),
+  dueDate,
+}) {
+  return { userEmail, isbn, borrowDate, dueDate };
 }
