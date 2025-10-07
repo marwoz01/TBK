@@ -89,3 +89,28 @@ User.prototype.hasOverdueBooks = function (days) {
       DateUtils.getDaysBetween(e.borrowDate, now) > days
   );
 };
+
+// const user = new User("Jan Kowalski", "jan.kowalski@example.com");
+
+// // console.log(user.canBorrow);
+// // console.log(user.borrowCount);
+// console.log(user.profile);
+
+// user.info = { name: "Janek", email: "janek@gmail.com" };
+// console.log(user.name);
+// console.log(user.email);
+
+// user.addBorrowedBook("9788324589456", "Władca Pierścieni");
+// console.log(user.borrowedBooks);
+
+// user.addBorrowedBook("9788328708815", "1984");
+// console.log(user.borrowHistory);
+
+// user.removeBorrowedBook("9788324589456");
+// console.log(user.borrowedBooks);
+
+// console.log(user.getBorrowHistory());
+
+// console.log(user.getFormattedHistory());
+
+// console.log(user.hasOverdueBooks(30));

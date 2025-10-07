@@ -24,3 +24,14 @@ export class DateUtils {
     return d;
   }
 }
+
+// console.log(DateUtils.isLeapYear(1900));
+// console.log(DateUtils.isLeapYear(2024));
+
+// const date1 = "2025-01-01";
+// const date2 = "2025-01-03";
+// console.log(DateUtils.getDaysBetween(date1, date2));
+
+// console.log(DateUtils.formatDate("2025-3-7"));
+
+// console.log(DateUtils.addDays("2025-03-07", 5));

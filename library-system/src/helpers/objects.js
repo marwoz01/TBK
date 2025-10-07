@@ -13,3 +13,21 @@ export function pickProperties(obj, keys) {
   }
   return result;
 }
+
+// const book = { title: "Hobbit", author: "Tolkien" };
+// const extra = { genre: "Fantasy", year: 1937 };
+// console.log(extendObject(book, extra));
+
+// const original = { title: "1984", author: { name: "Orwell" } };
+// const copy = cloneObject(original);
+// copy.author.name = "George Orwell";
+// console.log(original.author.name);
+// console.log(copy.author.name);
+
+// const book2 = {
+//   title: "Władca Pierścieni",
+//   author: "Tolkien",
+//   genre: "Fantasy",
+//   year: 1954,
+// };
+// console.log(pickProperties(book2, ["title", "author"]));

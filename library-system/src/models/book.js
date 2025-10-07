@@ -104,3 +104,32 @@ export class Book {
     return book1.publicationYear - book2.publicationYear;
   }
 }
+
+// const book = new Book({
+//   title: "Hobbit",
+//   author: "Tolkien",
+//   isbn: "9788324589456",
+//   publicationYear: 1937,
+//   totalCopies: 5,
+//   borrowedCopies: 2,
+//   genre: "Fantasy",
+// });
+// console.log(book.availableCopies);
+// console.log(book.isAvailable);
+// console.log(book.info);
+// console.log(book.age);
+// book.copies = { total: 10, borrowed: 4 };
+// console.log(book.availableCopies); // 6
+// book.details = { title: "Władca Pierścieni", genre: "Epicka fantasy" };
+// console.log(book.info);
+// book.borrow();
+// console.log(book.availableCopies);
+// book.return();
+// console.log(book.availableCopies);
+// book.returnBook();
+// console.log(book.availableCopies);
+// console.log(book.getFormattedInfo());
+// console.log(Book.isValidBook({ title: "Hobbit", author: "Tolkien", isbn: "9788324589456", publicationYear: 1937, totalCopies: 5, genre: "Fantasy" }));
+// const book1 = new Book({ title: "Hobbit", author: "Tolkien", isbn: "9788324589456", publicationYear: 1937, totalCopies: 5, genre: "Fantasy" });
+// const book2 = new Book({ title: "1984", author: "Orwell", isbn: "9788328708815", publicationYear: 1949, totalCopies: 3, genre: "Dystopia" });
+// console.log(Book.compareByYear(book1, book2));

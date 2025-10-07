@@ -36,3 +36,33 @@ export function calculateStatistics(books, users, loans) {
     mostPopularGenre,
   };
 }
+
+// const books = [
+//   {
+//     title: "1984",
+//     publicationYear: 1949,
+//     genre: "Dystopia",
+//     totalCopies: 2,
+//     borrowedCopies: 1,
+//     availableCopies: 1,
+//     isAvailable: true,
+//   },
+//   {
+//     title: "Hobbit",
+//     publicationYear: 1937,
+//     genre: "Fantasy",
+//     totalCopies: 3,
+//     borrowedCopies: 3,
+//     availableCopies: 0,
+//     isAvailable: false,
+//   },
+// ];
+
+// console.log("sort asc", sortBooksByYear(books, "asc"));
+// console.log("sort desc", sortBooksByYear(books, "desc"));
+// console.log("available", filterAvailableBooks(books));
+// console.log("by genre", groupBooksByGenre(books));
+
+// const users = [{}, {}, {}];
+// const loans = [{}, {}];
+// console.log("stats", calculateStatistics(books, users, loans));

@@ -208,3 +208,44 @@ export class Library {
     };
   }
 }
+
+// const library = new Library("Biblioteka Miejska");
+// library.addBook({
+//   title: "Władca Pierścieni",
+//   author: "J.R.R. Tolkien",
+//   publicationYear: 1954,
+//   genre: "Fantasy",
+//   isbn: "9788324589456",
+//   totalCopies: 3,
+// });
+// library.addBook({
+//   title: "1984",
+//   author: "George Orwell",
+//   publicationYear: 1949,
+//   genre: "Dystopia",
+//   isbn: "9788328708815",
+//   totalCopies: 2,
+// });
+// console.log(library.books.length);
+// console.log(library.findBookByISBN("9788324589456"));
+// console.log(library.findBooksByAuthor("Orwell"));
+// console.log(library.findBooksByGenre("Fantasy"));
+// library.updateBook("9788324589456", { totalCopies: 5 });
+// console.log(library.findBookByISBN("9788324589456").totalCopies);
+// library.removeBook("9788328708815");
+// console.log(library.books.length);
+// library.registerUser({ name: "Jan Kowalski", email: "jan.kowalski@example.com" });
+// library.registerUser({ name: "Anna Nowak", email: "anna.nowak@example.com" });
+// console.log(library.users.length);
+// library.updateUser("jan.kowalski@example.com", { name: "Janek Kowalski" });
+// console.log(library.findUserByEmail("jan.kowalski@example.com").name);
+// library.borrowBook("jan.kowalski@example.com", "9788324589456");
+// console.log(library.loans.length);
+// library.returnBook("jan.kowalski@example.com", "9788324589456");
+// console.log(library.findBookByISBN("9788324589456").availableCopies);
+// console.log(library.statistics);
+// console.log(library.getUserLoans("jan.kowalski@example.com"));
+// console.log(library.getOverdueLoans(14));
+// console.log(library.getPopularBooks(1));
+// console.log(library.getActiveUsers(1));
+// console.log(library.generateReport());

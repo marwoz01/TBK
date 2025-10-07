@@ -8,6 +8,14 @@ import { createBook, createUser } from "./helpers/factories.js";
 import { swapElements, mergeArrays } from "./helpers/arrays.js";
 import { extendObject } from "./helpers/objects.js";
 
+// Helpers
+import {
+  sortBooksByYear,
+  filterAvailableBooks,
+  groupBooksByGenre,
+  calculateStatistics,
+} from "./helpers/processing.js";
+
 // Inicjalizacja biblioteki
 const library = new Library("Biblioteka Miejska");
 
@@ -74,6 +82,6 @@ console.log(numbers.myFilter((n) => n % 2 === 0)); // [2, 4]
 const [book1, book2] = swapElements([tolkienBook, orwellBook]);
 const allBooks = mergeArrays(fantasyBooks, dystopiaBooks);
 const extended = extendObject(book1, { genre: "Epic Fantasy" });
-
-// (opcjonalnie dla debugowania w DevTools)
-window.library = library;
+// console.log(book1, book2);
+// console.log(allBooks);
+// console.log(extended);

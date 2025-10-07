@@ -1,4 +1,3 @@
-// src/utils/validator.js
 export class Validator {
   static isValidISBN(isbn) {
     return typeof isbn === "string" && /^\d{13}$/.test(isbn);
@@ -20,12 +19,9 @@ export class Validator {
   static isValidPageCount(pages) {
     return Number.isInteger(pages) && pages > 0;
   }
-
-  // pomocnicze dla Book.isValidBook:
-  static isString(v) {
-    return typeof v === "string" && v.trim().length > 0;
-  }
-  static isPositiveNumber(v) {
-    return Number.isFinite(v) && v > 0;
-  }
 }
+
+// console.log(Validator.isValidISBN("9781234567890"));
+// console.log(Validator.isValidEmail("mail@gmail.com"));
+// console.log(Validator.isValidYear(2020));
+// console.log(Validator.isValidPageCount(100));
