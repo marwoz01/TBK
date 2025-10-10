@@ -77,31 +77,39 @@ const calculateOrderTotal = (order) => {
 };
 
 // Przetwarzanie wszystkich zamówień
-function processAllOrders() {
-  let processedCount = 0;
-  let failedCount = 0;
+const processAllOrders = (orders = []) =>
+  orders.reduce(
+    (acc, order) => {
+      if (!order.processed) {
+        const isValid = validateOrder(order);
 
-  for (let i = 0; i < orders.length; i++) {
-    if (!orders[i].processed) {
-      if (validateOrder(orders[i])) {
-        orders[i].processed = true;
-        orders[i].total = calculateOrderTotal(orders[i]);
-        processedCount++;
-      } else {
-        failedCount++;
-        processingErrors.push({
-          orderId: orders[i].id,
-          errors: validationResults[orders[i].id],
-        });
+        return isValid
+          ? {
+              ...acc,
+              processed: acc.processed + 1,
+              results: [
+                ...acc.results,
+                {
+                  ...order,
+                  processed: true,
+                  total: calculateOrderTotal(order),
+                },
+              ],
+            }
+          : {
+              ...acc,
+              failed: acc.failed + 1,
+              errors: [
+                ...acc.errors,
+                { orderId: order.id, errors: validationResults[order.id] },
+              ],
+            };
       }
-    }
-  }
 
-  return {
-    processed: processedCount,
-    failed: failedCount,
-  };
-}
+      return acc;
+    },
+    { processed: 0, failed: 0, results: [], errors: [] }
+  );
 
 // Filtrowanie zamówień według klienta i regionu
 function getCustomerOrdersByRegion(customerId, region) {
