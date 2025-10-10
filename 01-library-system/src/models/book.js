@@ -1,5 +1,5 @@
 import { Validator } from "../utils/validator.js";
-
+ 
 export class Book {
   constructor({
     title,
