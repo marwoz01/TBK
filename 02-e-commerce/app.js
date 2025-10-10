@@ -112,21 +112,14 @@ const processAllOrders = (orders = []) =>
   );
 
 // Filtrowanie zamówień według klienta i regionu
-function getCustomerOrdersByRegion(customerId, region) {
-  let results = [];
-
-  for (let i = 0; i < orders.length; i++) {
-    if (
-      orders[i].customerId === customerId &&
-      orders[i].region === region &&
-      orders[i].processed
-    ) {
-      results.push(orders[i]);
-    }
-  }
-
-  return results;
-}
+const getCustomerOrdersByRegion = (orders, customerId, region) => {
+  return orders.filter(
+    (order) =>
+      order.customerId === customerId &&
+      order.region === region &&
+      order.processed
+  );
+};
 
 // Obliczanie statystyk sprzedaży według regionów
 function calculateRegionalStats() {
