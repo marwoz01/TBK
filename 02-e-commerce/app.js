@@ -158,51 +158,26 @@ const calculateRegionalStats = (orders) => {
 };
 
 // Znajdowanie najbardziej dochodowych klientów
-function getTopCustomers(limit) {
-  let customerTotals = {};
-
-  for (let i = 0; i < orders.length; i++) {
-    if (orders[i].processed) {
-      let customerId = orders[i].customerId;
-
-      if (!customerTotals[customerId]) {
-        customerTotals[customerId] = {
-          customerId: customerId,
-          totalSpent: 0,
-          orderCount: 0,
-        };
-      }
-
-      customerTotals[customerId].totalSpent += orders[i].total;
-      customerTotals[customerId].orderCount++;
-    }
-  }
-
-  // Konwersja do tablicy
-  let customerArray = [];
-  for (let customerId in customerTotals) {
-    customerArray.push(customerTotals[customerId]);
-  }
-
-  // Sortowanie (bubble sort dla demonstracji)
-  for (let i = 0; i < customerArray.length; i++) {
-    for (let j = i + 1; j < customerArray.length; j++) {
-      if (customerArray[i].totalSpent < customerArray[j].totalSpent) {
-        let temp = customerArray[i];
-        customerArray[i] = customerArray[j];
-        customerArray[j] = temp;
-      }
-    }
-  }
-
-  // Zwracanie tylko top N
-  let topCustomers = [];
-  for (let i = 0; i < Math.min(limit, customerArray.length); i++) {
-    topCustomers.push(customerArray[i]);
-  }
-
-  return topCustomers;
-}
+const getTopCustomers = (orders, limit) => {
+  orders
+    .filter((o) => o.processed)
+    .reduce((acc, { customerId, total }) => {
+      const existing = acc.find((c) => c.customerId === customerId);
+      return existing
+        ? acc.map((c) =>
+            c.customerId === customerId
+              ? {
+                  ...c,
+                  totalSpent: c.totalSpent + total,
+                  orderCount: c.orderCount + 1,
+                }
+              : c
+          )
+        : [...acc, { customerId, totalSpent: total, orderCount: 1 }];
+    }, [])
+    .sort((a, b) => b.totalSpent - a.totalSpent)
+    .slice(0, limit);
+};
 
 // Generowanie raportu sprzedaży
 function generateSalesReport(startDate, endDate) {
