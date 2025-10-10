@@ -19,7 +19,7 @@ function addOrder(customerId, items, discount, region) {
 }
 
 // Walidacja zamówienia
-function validateOrder(order) {
+const validateOrder = (order) => {
   let errors = [];
 
   const customerErrors =
@@ -32,7 +32,7 @@ function validateOrder(order) {
     !order.items || order.items.length === 0 ? ["No items in order"] : [];
   errors = [...errors, ...itemsErrors];
 
-  const itemErrors = order.items
+  const itemErrors = (order.items || [])
     .map((item) => [
       !item.price || item.price <= 0
         ? `Invalid price for item: ${item.name}`
@@ -43,47 +43,38 @@ function validateOrder(order) {
     ])
     .reduce((acc, arr) => acc.concat(arr), [])
     .filter(Boolean);
-
   errors = [...errors, ...itemErrors];
 
   const discountErrors =
     order.discount && (order.discount < 0 || order.discount > 100)
       ? ["Invalid discount percentage"]
       : [];
-
   errors = [...errors, ...discountErrors];
 
   return { isValid: errors.length === 0, errors };
-}
+};
 
 // Obliczanie całkowitej wartości zamówienia
-function calculateOrderTotal(order) {
-  let subtotal = 0;
+const calculateOrderTotal = (order) => {
+  const subtotal = (order.items || []).reduce(
+    (acc, item) => acc + item.price * item.quantity,
+    0
+  );
 
-  for (let i = 0; i < order.items.length; i++) {
-    let itemTotal = order.items[i].price * order.items[i].quantity;
-    subtotal += itemTotal;
-  }
+  const discountAmount = order.discount ? subtotal * (order.discount / 100) : 0;
 
-  let discountAmount = 0;
-  if (order.discount) {
-    discountAmount = subtotal * (order.discount / 100);
-  }
+  const taxBase = subtotal - discountAmount;
+  const tax =
+    order.region === "EU"
+      ? taxBase * 0.23
+      : order.region === "US"
+      ? taxBase * 0.08
+      : order.region === "Asia"
+      ? taxBase * 0.15
+      : 0;
 
-  let total = subtotal - discountAmount;
-
-  // Dodanie podatku w zależności od regionu
-  let tax = 0;
-  if (order.region === "EU") {
-    tax = total * 0.23;
-  } else if (order.region === "US") {
-    tax = total * 0.08;
-  } else if (order.region === "Asia") {
-    tax = total * 0.15;
-  }
-
-  return total + tax;
-}
+  return taxBase + tax;
+};
 
 // Przetwarzanie wszystkich zamówień
 function processAllOrders() {
