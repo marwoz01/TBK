@@ -180,83 +180,80 @@ const getTopCustomers = (orders, limit) => {
 };
 
 // Generowanie raportu sprzedaży
-function generateSalesReport(startDate, endDate) {
-  let report = {
-    period: {
-      start: startDate,
-      end: endDate,
-    },
-    summary: {
-      totalOrders: 0,
-      totalRevenue: 0,
-      totalItems: 0,
+const generateSalesReport = (orders, startDate, endDate) => {
+  const period = { start: startDate, end: endDate };
+
+  const inRange = (o) =>
+    o?.processed && o.timestamp >= startDate && o.timestamp <= endDate;
+
+  const selected = (orders ?? []).filter(inRange);
+
+  // Podsumowanie
+  const summaryBase = selected.reduce(
+    (acc, o) => ({
+      totalOrders: acc.totalOrders + 1,
+      totalRevenue: acc.totalRevenue + (o.total ?? 0),
+      totalItems:
+        acc.totalItems +
+        (o.items ?? []).reduce((s, it) => s + (it.quantity ?? 0), 0),
       averageOrderValue: 0,
-    },
-    regionalBreakdown: {},
-    topProducts: [],
+    }),
+    { totalOrders: 0, totalRevenue: 0, totalItems: 0, averageOrderValue: 0 }
+  );
+
+  const summary = {
+    ...summaryBase,
+    averageOrderValue:
+      summaryBase.totalOrders > 0
+        ? summaryBase.totalRevenue / summaryBase.totalOrders
+        : 0,
   };
 
-  let productSales = {};
+  // Rozbicie regionalne
+  const regionalBreakdown = selected.reduce((acc, o) => {
+    const r = o.region ?? "unknown";
+    const prev = acc[r] ?? { orders: 0, revenue: 0 };
+    return {
+      ...acc,
+      [r]: {
+        orders: prev.orders + 1,
+        revenue: prev.revenue + (o.total ?? 0),
+      },
+    };
+  }, {});
 
-  for (let i = 0; i < orders.length; i++) {
-    if (
-      orders[i].processed &&
-      orders[i].timestamp >= startDate &&
-      orders[i].timestamp <= endDate
-    ) {
-      report.summary.totalOrders++;
-      report.summary.totalRevenue += orders[i].total;
+  // Top produkty
+  const productMap = selected
+    .flatMap((o) =>
+      (o.items ?? []).map((it) => ({
+        name: it.name,
+        quantity: it.quantity ?? 0,
+        revenue: (it.price ?? 0) * (it.quantity ?? 0),
+      }))
+    )
+    .reduce(
+      (acc, p) => ({
+        ...acc,
+        [p.name]: {
+          name: p.name,
+          quantity: (acc[p.name]?.quantity ?? 0) + p.quantity,
+          revenue: (acc[p.name]?.revenue ?? 0) + p.revenue,
+        },
+      }),
+      {}
+    );
 
-      // Agregacja według regionu
-      if (!report.regionalBreakdown[orders[i].region]) {
-        report.regionalBreakdown[orders[i].region] = {
-          orders: 0,
-          revenue: 0,
-        };
-      }
-      report.regionalBreakdown[orders[i].region].orders++;
-      report.regionalBreakdown[orders[i].region].revenue += orders[i].total;
+  const topProducts = Object.values(productMap).sort(
+    (a, b) => b.revenue - a.revenue
+  );
 
-      // Liczenie produktów
-      for (let j = 0; j < orders[i].items.length; j++) {
-        let item = orders[i].items[j];
-        report.summary.totalItems += item.quantity;
-
-        if (!productSales[item.name]) {
-          productSales[item.name] = {
-            name: item.name,
-            quantity: 0,
-            revenue: 0,
-          };
-        }
-        productSales[item.name].quantity += item.quantity;
-        productSales[item.name].revenue += item.price * item.quantity;
-      }
-    }
-  }
-
-  if (report.summary.totalOrders > 0) {
-    report.summary.averageOrderValue =
-      report.summary.totalRevenue / report.summary.totalOrders;
-  }
-
-  // Konwersja produktów do tablicy i sortowanie
-  for (let productName in productSales) {
-    report.topProducts.push(productSales[productName]);
-  }
-
-  for (let i = 0; i < report.topProducts.length; i++) {
-    for (let j = i + 1; j < report.topProducts.length; j++) {
-      if (report.topProducts[i].revenue < report.topProducts[j].revenue) {
-        let temp = report.topProducts[i];
-        report.topProducts[i] = report.topProducts[j];
-        report.topProducts[j] = temp;
-      }
-    }
-  }
-
-  return report;
-}
+  return {
+    period,
+    summary,
+    regionalBreakdown,
+    topProducts,
+  };
+};
 
 // Przykład użycia:
 addOrder(
