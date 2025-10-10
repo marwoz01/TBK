@@ -1,6 +1,3 @@
-// SYSTEM ANALITYCZNY ZAMÓWIEŃ E-COMMERCE - WERSJA IMPERATYWNA
-// Kod do przekształcenia na wersję funkcyjną
-
 // Globalne dane
 let orders = [];
 let processingErrors = [];
@@ -25,31 +22,38 @@ function addOrder(customerId, items, discount, region) {
 function validateOrder(order) {
   let errors = [];
 
-  if (!order.customerId || order.customerId.length < 3) {
-    errors.push("Invalid customer ID");
-  }
+  const customerErrors =
+    !order.customerId || order.customerId.length < 3
+      ? ["Invalid customer ID"]
+      : [];
+  errors = [...errors, ...customerErrors];
 
-  if (!order.items || order.items.length === 0) {
-    errors.push("No items in order");
-  }
+  const itemsErrors =
+    !order.items || order.items.length === 0 ? ["No items in order"] : [];
+  errors = [...errors, ...itemsErrors];
 
-  if (order.items) {
-    for (let i = 0; i < order.items.length; i++) {
-      if (!order.items[i].price || order.items[i].price <= 0) {
-        errors.push("Invalid price for item: " + order.items[i].name);
-      }
-      if (!order.items[i].quantity || order.items[i].quantity <= 0) {
-        errors.push("Invalid quantity for item: " + order.items[i].name);
-      }
-    }
-  }
+  const itemErrors = order.items
+    .map((item) => [
+      !item.price || item.price <= 0
+        ? `Invalid price for item: ${item.name}`
+        : null,
+      !item.quantity || item.quantity <= 0
+        ? `Invalid quantity for item: ${item.name}`
+        : null,
+    ])
+    .reduce((acc, arr) => acc.concat(arr), [])
+    .filter(Boolean);
 
-  if (order.discount && (order.discount < 0 || order.discount > 100)) {
-    errors.push("Invalid discount percentage");
-  }
+  errors = [...errors, ...itemErrors];
 
-  validationResults[order.id] = errors;
-  return errors.length === 0;
+  const discountErrors =
+    order.discount && (order.discount < 0 || order.discount > 100)
+      ? ["Invalid discount percentage"]
+      : [];
+
+  errors = [...errors, ...discountErrors];
+
+  return { isValid: errors.length === 0, errors };
 }
 
 // Obliczanie całkowitej wartości zamówienia
