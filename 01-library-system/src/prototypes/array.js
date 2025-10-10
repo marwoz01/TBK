@@ -4,7 +4,6 @@ Array.prototype.myEvery = function (callback) {
   }
   return true;
 };
-
 // console.log([1, 2, 3].myEvery((n) => n > 0));
 // console.log([1, 2, -1].myEvery((n) => n > 0));
 
@@ -15,7 +14,6 @@ Array.prototype.myFilter = function (callback) {
   }
   return result;
 };
-
 // console.log([1, 2, 3, 4, 5].myFilter((n) => n % 2 === 0));
 
 Array.prototype.groupBy = function (key) {
@@ -29,7 +27,6 @@ Array.prototype.groupBy = function (key) {
   }
   return out;
 };
-
 // const books = [
 //   { title: "Hobbit", genre: "Fantasy" },
 //   { title: "Władca Pierścieni", genre: "Fantasy" },

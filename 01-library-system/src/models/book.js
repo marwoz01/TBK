@@ -114,10 +114,12 @@ export class Book {
 //   borrowedCopies: 2,
 //   genre: "Fantasy",
 // });
+
 // console.log(book.availableCopies);
 // console.log(book.isAvailable);
 // console.log(book.info);
 // console.log(book.age);
+
 // book.copies = { total: 10, borrowed: 4 };
 // console.log(book.availableCopies); // 6
 // book.details = { title: "Władca Pierścieni", genre: "Epicka fantasy" };
