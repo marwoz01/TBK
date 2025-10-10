@@ -4,7 +4,7 @@ let processingErrors = [];
 let validationResults = {};
 
 // Funkcja dodająca zamówienie
-function addOrder(customerId, items, discount, region) {
+const addOrder = (customerId, items, discount, region) => {
   let order = {
     id: orders.length + 1,
     customerId: customerId,
@@ -16,7 +16,7 @@ function addOrder(customerId, items, discount, region) {
   };
   orders.push(order);
   return order;
-}
+};
 
 // Walidacja zamówienia
 const validateOrder = (order) => {
