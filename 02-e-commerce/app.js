@@ -122,39 +122,40 @@ const getCustomerOrdersByRegion = (orders, customerId, region) => {
 };
 
 // Obliczanie statystyk sprzedaży według regionów
-function calculateRegionalStats() {
-  let stats = {};
+const calculateRegionalStats = (orders) => {
+  const byRegion = (orders || [])
+    .filter((order) => order && order.processed)
+    .reduce((acc, order) => {
+      const region = order.region;
+      const prev = acc[region] || {
+        totalRevenue: 0,
+        orderCount: 0,
+        itemsSold: 0,
+      };
 
-  for (let i = 0; i < orders.length; i++) {
-    if (orders[i].processed) {
-      let region = orders[i].region;
+      const itemsQty = (order.items || []).reduce(
+        (sum, it) => sum + (it.quantity || 0),
+        0
+      );
 
-      if (!stats[region]) {
-        stats[region] = {
-          totalRevenue: 0,
-          orderCount: 0,
-          itemsSold: 0,
-          averageOrderValue: 0,
-        };
-      }
+      const next = {
+        ...prev,
+        totalRevenue: prev.totalRevenue + (order.total || 0),
+        orderCount: prev.orderCount + 1,
+        itemsSold: prev.itemsSold + itemsQty,
+      };
 
-      stats[region].totalRevenue += orders[i].total;
-      stats[region].orderCount++;
+      return { ...acc, [region]: next };
+    }, {});
 
-      for (let j = 0; j < orders[i].items.length; j++) {
-        stats[region].itemsSold += orders[i].items[j].quantity;
-      }
-    }
-  }
+  const withAverages = Object.keys(byRegion).reduce((acc, region) => {
+    const r = byRegion[region];
+    const avg = r.orderCount ? r.totalRevenue / r.orderCount : 0;
+    return { ...acc, [region]: { ...r, averageOrderValue: avg } };
+  }, {});
 
-  // Obliczanie średniej wartości zamówienia
-  for (let region in stats) {
-    stats[region].averageOrderValue =
-      stats[region].totalRevenue / stats[region].orderCount;
-  }
-
-  return stats;
-}
+  return withAverages;
+};
 
 // Znajdowanie najbardziej dochodowych klientów
 function getTopCustomers(limit) {
