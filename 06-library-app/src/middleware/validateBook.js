@@ -9,10 +9,7 @@ function validateBook(req, res, next) {
   ];
 
   for (const field of requiredFields) {
-    if (
-      !Object.prototype.hasOwnProperty.call(req.body, field) ||
-      req.body[field] === undefined
-    ) {
+    if (req.body[field] === undefined) {
       return res.status(400).json({
         error: "Validation failed",
         details: `Missing required field: ${field}`,

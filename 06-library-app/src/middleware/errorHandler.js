@@ -1,22 +1,15 @@
 function errorHandler(err, req, res, next) {
-  console.error("Error handler:", err);
-
-  const message =
-    err && err.message ? String(err.message) : "Internal server error";
-  const lower = message.toLowerCase();
+  const msg = (
+    err && err.message ? err.message : "Internal server error"
+  ).toLowerCase();
 
   let status = 500;
-
-  if (lower.includes("not found")) {
-    status = 404;
-  } else if (lower.includes("already exists")) {
-    status = 409;
-  } else if (lower.includes("validation") || lower.includes("invalid")) {
-    status = 400;
-  }
+  if (msg.includes("not found")) status = 404;
+  else if (msg.includes("already exists")) status = 409;
+  else if (msg.includes("validation") || msg.includes("invalid")) status = 400;
 
   res.status(status).json({
-    error: message,
+    error: err.message || "Internal server error",
     timestamp: new Date().toISOString(),
   });
 }

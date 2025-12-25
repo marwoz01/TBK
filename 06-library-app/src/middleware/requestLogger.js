@@ -1,9 +1,5 @@
 function requestLogger(req, res, next) {
-  const timestamp = new Date().toISOString();
-  const { method, originalUrl } = req;
-
-  console.log(`[${timestamp}] ${method} ${originalUrl}`);
-
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
 }
 

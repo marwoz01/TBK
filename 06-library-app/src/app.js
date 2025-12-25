@@ -1,16 +1,18 @@
-// src/app.js
+const booksRouter = require("./routes/books.routes");
+
 const express = require("express");
 const app = express();
 
 const requestLogger = require("./middleware/requestLogger");
 const errorHandler = require("./middleware/errorHandler");
-const booksRouter = require("./routes/books.routes");
 
-// Middleware globalne
-app.use(express.json()); // Parser JSON
-app.use(requestLogger); // Logowanie żądań
+app.use(express.json());
+app.use(requestLogger);
 
-// Endpoint główny zwracający dostępne endpointy
+app.get("/api/health", (req, res) => {
+  res.json({ status: "OK", timestamp: new Date().toISOString() });
+});
+
 app.get("/api", (req, res) => {
   res.json({
     message: "Library Management API",
@@ -26,26 +28,14 @@ app.get("/api", (req, res) => {
   });
 });
 
-// Endpoint health check
-app.get("/api/health", (req, res) => {
-  res.json({
-    status: "OK",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-// Rejestracja routerów
 app.use("/api/books", booksRouter);
 
-// Obsługa nieistniejących ścieżek (404)
 app.use((req, res) => {
-  res.status(404).json({
-    error: "Endpoint not found",
-    availableEndpoints: "/api",
-  });
+  res
+    .status(404)
+    .json({ error: "Endpoint not found", availableEndpoints: "/api" });
 });
 
-// Obsługa błędów (zawsze na końcu)
 app.use(errorHandler);
 
 module.exports = app;
